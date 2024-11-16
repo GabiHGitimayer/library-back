@@ -41,7 +41,7 @@ public class FineEntity {
     @Temporal(TemporalType.DATE)
     private Date calculationDate;
 
-    public void calcularMulta() {
+    public void calculateFine() {
         Date today = new Date();
         long daysLate = (today.getTime() - loan.getEfectiveReturnDate().getTime()) / (1000 * 60 * 60 * 24);
         if (daysLate > 0) {

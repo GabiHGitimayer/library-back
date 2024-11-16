@@ -19,11 +19,11 @@ import com.biblioteca.services.HistoryService;
 public class HistoryController {
 
     @Autowired
-    private HistoryService historicoService;
+    private HistoryService historyService;
 
-    @GetMapping("/{idUsuario}")
-    public ResponseEntity<List<HistoryEntity>> listarHistorico(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(historicoService.listarHistorico(idUsuario));
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<HistoryEntity>> listHistory(@PathVariable Long userId) {
+        return ResponseEntity.ok(historyService.listHistory(userId));
     }
 }
 

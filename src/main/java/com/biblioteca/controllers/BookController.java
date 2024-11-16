@@ -23,39 +23,39 @@ import com.biblioteca.services.BookService;
 public class BookController {
 
     @Autowired
-    private BookService livroService;
+    private BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookEntity> save(@RequestBody BookEntity livro) {
-        return ResponseEntity.ok(livroService.save(livro));
+    public ResponseEntity<BookEntity> save(@RequestBody BookEntity book) {
+        return ResponseEntity.ok(bookService.save(book));
     }
 
     @GetMapping
     public ResponseEntity<List<BookEntity>> listAll() {
-        return ResponseEntity.ok(livroService.findAll());
+        return ResponseEntity.ok(bookService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookEntity> findById(@PathVariable Long id) {
-        BookEntity livro = livroService.findById(id)
+        BookEntity book = bookService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
-        return ResponseEntity.ok(livro);
+        return ResponseEntity.ok(book);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookEntity> update(@PathVariable Long id, @RequestBody BookEntity livro) {
-        return livroService.findById(id)
-                .map(existingLivro -> {
-                    existingLivro.setTitle(livro.getTitle());
-                    existingLivro.setAuthor(livro.getAuthor());
-                    existingLivro.setGenre(livro.getGenre());
-                    existingLivro.setIsbn(livro.getIsbn());
-                    existingLivro.setPublicationYear(livro.getPublicationYear());
-                    existingLivro.setCopiesQuantity(livro.getCopiesQuantity());
-                    BookEntity updatedLivro = livroService.save(existingLivro);
-                    return ResponseEntity.ok(updatedLivro);
+    public ResponseEntity<BookEntity> update(@PathVariable Long id, @RequestBody BookEntity book) {
+        return bookService.findById(id)
+                .map(existingBook -> {
+                    existingBook.setTitle(book.getTitle());
+                    existingBook.setAuthor(book.getAuthor());
+                    existingBook.setGenre(book.getGenre());
+                    existingBook.setIsbn(book.getIsbn());
+                    existingBook.setPublicationYear(book.getPublicationYear());
+                    existingBook.setCopiesQuantity(book.getCopiesQuantity());
+                    BookEntity updatedBook = bookService.save(existingBook);
+                    return ResponseEntity.ok(updatedBook);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -63,7 +63,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        livroService.deleteById(id);
+        bookService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

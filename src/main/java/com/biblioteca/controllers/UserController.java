@@ -23,31 +23,31 @@ import com.biblioteca.services.UserService;
 public class UserController {
 
     @Autowired
-    private UserService usuarioService;
+    private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<UserEntity> saveUser(@RequestBody UserEntity usuarioEntity) {
-    	return ResponseEntity.ok(usuarioService.saveUser(usuarioEntity));
+    public ResponseEntity<UserEntity> saveUser(@RequestBody UserEntity userEntity) {
+    	return ResponseEntity.ok(userService.saveUser(userEntity));
     }
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> listAll() {
-        return ResponseEntity.ok(usuarioService.listAllUsers());
+        return ResponseEntity.ok(userService.listAllUsers());
     }
 
     @GetMapping("/search/{id}")
     public ResponseEntity<UserEntity> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.findUserById(id));
+        return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<UserEntity> update(@PathVariable Long id, @RequestBody UserEntity usuario) {
-        return ResponseEntity.ok(usuarioService.updateUser(id, usuario));
+    public ResponseEntity<UserEntity> update(@PathVariable Long id, @RequestBody UserEntity user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        usuarioService.deleteUser(id);
+        userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }

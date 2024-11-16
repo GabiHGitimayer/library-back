@@ -30,7 +30,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -46,13 +46,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterDTO data) {
-        if(this.usuarioRepository.findByUserCpf(data.cpf()) != null) return ResponseEntity.badRequest().build();
+        if(this.userRepository.findByUserCpf(data.cpf()) != null) return ResponseEntity.badRequest().build();
         
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         UserEntity newUser = new UserEntity(data.name(), data.email(), data.cpf(), data.type(), encryptedPassword);
         
-        this.usuarioRepository.save(newUser);
+        this.userRepository.save(newUser);
         return ResponseEntity.ok(new RegisterResponseDTO("Usuário criado com sucesso!"));
     }
-    
 }

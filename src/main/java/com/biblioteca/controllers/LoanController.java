@@ -24,64 +24,64 @@ import com.biblioteca.services.LoanService;
 public class LoanController {
 
     @Autowired
-    private LoanService emprestimoService;
+    private LoanService loanService;
     
     @PostMapping("/do")
-    public ResponseEntity<LoanEntity> realizarEmprestimo(@RequestBody LoanEntity emprestimo) {
+    public ResponseEntity<LoanEntity> doLoan(@RequestBody LoanEntity loan) {
         try {
-            LoanEntity salvo = emprestimoService.realizarEmprestimo(emprestimo);
-            return ResponseEntity.ok(salvo);
+            LoanEntity saved = loanService.doLoan(loan);
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
     
     @PutMapping("/update/{id}")
-    public ResponseEntity<LoanEntity> atualizarEmprestimo(@PathVariable Long id, @RequestBody LoanEntity emprestimoAtualizado) {
+    public ResponseEntity<LoanEntity> updateLoan(@PathVariable Long id, @RequestBody LoanEntity updatedLoan) {
         try {
-            LoanEntity emprestimo = emprestimoService.atualizarEmprestimo(id, emprestimoAtualizado);
-            return ResponseEntity.ok(emprestimo);
+            LoanEntity loan = loanService.updateLoan(id, updatedLoan);
+            return ResponseEntity.ok(loan);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<LoanEntity>> listarEmprestimos() {
+    public ResponseEntity<List<LoanEntity>> listLoan() {
         try {
-            List<LoanEntity> emprestimos = emprestimoService.findAll();
-            return ResponseEntity.ok(emprestimos);
+            List<LoanEntity> loans = loanService.findAll();
+            return ResponseEntity.ok(loans);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
 
     @PostMapping("/return/{id}")
-    public ResponseEntity<LoanEntity> realizarDevolucao(@PathVariable Long id) {
+    public ResponseEntity<LoanEntity> makeReturn(@PathVariable Long id) {
         try {
-            LoanEntity devolvido = emprestimoService.realizarDevolucao(id);
-            return ResponseEntity.ok(devolvido);
+            LoanEntity returned = loanService.makeReturn(id);
+            return ResponseEntity.ok(returned);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
 
     @GetMapping("/locate")
-    public ResponseEntity<List<LoanEntity>> getAllEmprestimos() {
+    public ResponseEntity<List<LoanEntity>> listAllLoans() {
         try {
-            List<LoanEntity> emprestimos = emprestimoService.findAll();
-            return ResponseEntity.ok(emprestimos);
+            List<LoanEntity> loans = loanService.findAll();
+            return ResponseEntity.ok(loans);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
 
     @GetMapping("/locate/{id}")
-    public ResponseEntity<LoanEntity> getEmprestimoById(@PathVariable Long id) {
+    public ResponseEntity<LoanEntity> getLoanById(@PathVariable Long id) {
         try {
-            Optional<LoanEntity> emprestimo = emprestimoService.findById(id);
-            if (emprestimo.isPresent()) {
-                return ResponseEntity.ok(emprestimo.get());
+            Optional<LoanEntity> loan = loanService.findById(id);
+            if (loan.isPresent()) {
+                return ResponseEntity.ok(loan.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -91,9 +91,9 @@ public class LoanController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteEmprestimo(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         try {
-            emprestimoService.deleteById(id);
+            loanService.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(400).build();

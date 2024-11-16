@@ -60,11 +60,11 @@ public class LoanEntity {
             throw new IllegalArgumentException("A data do empréstimo deve ser informada.");
         }
         if (this.returnDate == null) {
-            this.returnDate = calcularDataDevolucao(this.loanDate, 7);
+            this.returnDate = calculateReturnDate(this.loanDate, 7);
         }
     }
 
-    public Date calcularDataDevolucao(Date initialDate, int days) {
+    public Date calculateReturnDate(Date initialDate, int days) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(initialDate);
         int addedDays = 0;
@@ -80,7 +80,7 @@ public class LoanEntity {
         return cal.getTime();
     }
 
-    public void verificarStatus() {
+    public void verifyStatus() {
         if (this.loanStatus.equals("Devolvido")) {
             return;
         }
@@ -93,7 +93,7 @@ public class LoanEntity {
         }
     }
 
-    public void realizarDevolucao() {
+    public void makeReturn() {
         this.efectiveReturnDate = new Date();
         this.loanStatus = "Devolvido";
     }

@@ -21,28 +21,26 @@ import com.biblioteca.services.FineService;
 public class FineController {
 
     @Autowired
-    private FineService multaService;
+    private FineService fineService;
     
     @Autowired
-    private LoanService emprestimoService;
+    private LoanService loanService;
 
-    @PostMapping("/calculate/{idEmprestimo}")
-    public ResponseEntity<FineEntity> calcularMulta(@PathVariable Long idEmprestimo) {
-        LoanEntity emprestimo = emprestimoService.findById(idEmprestimo)
+    @PostMapping("/calculate/{loanId}")
+    public ResponseEntity<FineEntity> calculateFine(@PathVariable Long loanId) {
+        LoanEntity loan = loanService.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
-        FineEntity multa = multaService.calcularMulta(emprestimo);
-        return ResponseEntity.ok(multa);  // Retorna a entidade completa com o valor da multa
+        FineEntity fine = fineService.calculateFine(loan);
+        return ResponseEntity.ok(fine);
     }
-
     
     @PutMapping("/update/{id}")
-    public ResponseEntity<FineEntity> atualizarMulta(@PathVariable Long id, @RequestBody FineEntity multaAtualizada) {
+    public ResponseEntity<FineEntity> updateFine(@PathVariable Long id, @RequestBody FineEntity updatedFine) {
         try {
-            FineEntity multa = multaService.atualizarMulta(id, multaAtualizada);
-            return ResponseEntity.ok(multa);
+            FineEntity fine = fineService.updateFine(id, updatedFine);
+            return ResponseEntity.ok(fine);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
     }
-
 }
