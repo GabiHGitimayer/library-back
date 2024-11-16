@@ -13,23 +13,22 @@ import com.biblioteca.repositories.BookRepository;
 public class BookService {
 
     @Autowired
-    private BookRepository livroRepository;
+    private BookRepository bookRepository;
 
     public List<BookEntity> findAll() {
-        return livroRepository.findAll();
+        return bookRepository.findAll();
     }
 
- // LivroService.java
     public Optional<BookEntity> findById(Long id) {
-        return livroRepository.findById(id);
+        return bookRepository.findById(id);
     }
 
 
     public BookEntity save(BookEntity livro) {
-        return livroRepository.save(livro);
+        return bookRepository.save(livro);
     }
 
     public void deleteById(Long id) {
-        livroRepository.deleteById(id);
+        bookRepository.deleteById(id);
     }
 }

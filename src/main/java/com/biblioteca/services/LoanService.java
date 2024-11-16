@@ -16,111 +16,102 @@ import com.biblioteca.repositories.UserRepository;
 @Service
 public class LoanService {
     @Autowired
-    private LoanRepository emprestimoRepository;
+    private LoanRepository loanRepository;
 
     @Autowired
-    private FineService multaService;
-    
-    @Autowired
-    private UserRepository usuarioRepository;
-    
-    @Autowired
-    private HistoryService historicoService;
-    
-    @Autowired
-    private BookRepository livroRepository;
+    private FineService fineService;
 
-    public LoanEntity realizarEmprestimo(LoanEntity emprestimo) {
-        UserEntity usuario = usuarioRepository.findById(emprestimo.getUserId().getUserId())
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private HistoryService historyService;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    public LoanEntity doLoan(LoanEntity loan) {
+        UserEntity user = userRepository.findById(loan.getUserId().getUserId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        BookEntity livro = livroRepository.findById(emprestimo.getBookId().getBookId())
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        BookEntity book = bookRepository.findById(loan.getBookId().getBookId())
+                .orElseThrow(() -> new RuntimeException("book não encontrado"));
 
-        if (livro.getCopiesQuantity() <= 0) {
+        if (book.getCopiesQuantity() <= 0) {
             throw new RuntimeException("Não há exemplares disponíveis para empréstimo");
         }
-
-        // Verifica se a data de empréstimo foi definida pelo usuário
-        if (emprestimo.getLoanDate() == null) {
+        if (loan.getLoanDate() == null) {
             throw new IllegalArgumentException("A data do empréstimo deve ser informada.");
         }
-
-        // Calcula a data de devolução se ainda não foi definida
-        if (emprestimo.getReturnDate() == null) {
-            emprestimo.setReturnDate(emprestimo.calcularDataDevolucao(emprestimo.getLoanDate(), 7));
+        if (loan.getReturnDate() == null) {
+            loan.setReturnDate(loan.calculateReturnDate(loan.getLoanDate(), 7));
         }
 
-        // Atualiza o estoque do livro
-        livro.setCopiesQuantity(livro.getCopiesQuantity() - 1);
-        livroRepository.save(livro);
+        book.setCopiesQuantity(book.getCopiesQuantity() - 1);
+        bookRepository.save(book);
+        loan.setUserId(user);
+        loan.setBookId(book);
+        LoanEntity saved = loanRepository.save(loan);
+        historyService.registerHistory(saved, null);
 
-        // Define o usuário e o livro no empréstimo e salva
-        emprestimo.setUserId(usuario);
-        emprestimo.setBookId(livro);
-        LoanEntity salvo = emprestimoRepository.save(emprestimo);
-
-        // Registra o histórico do empréstimo
-        historicoService.registrarHistorico(salvo, null);
-
-        return salvo;
+        return saved;
     }
-    
+
     public List<LoanEntity> findAll() {
-        List<LoanEntity> emprestimos = emprestimoRepository.findAll();
-        emprestimos.forEach(this::verificarStatusECalcularMulta);
-        return emprestimos;
-    }
-    
-    public LoanEntity atualizarEmprestimo(Long id, LoanEntity emprestimoAtualizado) {
-        LoanEntity emprestimoExistente = emprestimoRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+        List<LoanEntity> loans = loanRepository.findAll();
+        loans.forEach(this::verifyStatusAndCalculateFine);
 
-        emprestimoExistente.setReturnDate(emprestimoAtualizado.getReturnDate());
-        emprestimoExistente.setLoanStatus(emprestimoAtualizado.getLoanStatus());
-
-        return emprestimoRepository.save(emprestimoExistente);
+        return loans;
     }
 
+    public LoanEntity updateLoan(Long id, LoanEntity updatedLoan) {
+        LoanEntity existingLoan = loanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+
+        existingLoan.setReturnDate(updatedLoan.getReturnDate());
+        existingLoan.setLoanStatus(updatedLoan.getLoanStatus());
+
+        return loanRepository.save(existingLoan);
+    }
 
     public Optional<LoanEntity> findById(Long id) {
-        Optional<LoanEntity> emprestimo = emprestimoRepository.findById(id);
-        emprestimo.ifPresent(this::verificarStatusECalcularMulta);
-        return emprestimo;
-    }
-    
-    public LoanEntity realizarDevolucao(Long idEmprestimo) {
-        LoanEntity emprestimo = emprestimoRepository.findById(idEmprestimo)
-            .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+        Optional<LoanEntity> loan = loanRepository.findById(id);
+        loan.ifPresent(this::verifyStatusAndCalculateFine);
 
-        if ("Devolvido".equals(emprestimo.getLoanStatus())) {
+        return loan;
+    }
+
+    public LoanEntity makeReturn(Long loanId) {
+        LoanEntity loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+
+        if ("Devolvido".equals(loan.getLoanStatus())) {
             throw new RuntimeException("Este empréstimo já foi devolvido");
         }
 
-        emprestimo.realizarDevolucao();
-        
-        BookEntity livro = emprestimo.getBookId();
-        livro.setCopiesQuantity(livro.getCopiesQuantity() + 1);
-        livroRepository.save(livro);
+        loan.makeReturn();
+        BookEntity book = loan.getBookId();
+        book.setCopiesQuantity(book.getCopiesQuantity() + 1);
+        bookRepository.save(book);
 
-        if (emprestimo.getEfectiveReturnDate().after(emprestimo.getReturnDate())) {
-            multaService.calcularMulta(emprestimo);
+        if (loan.getEfectiveReturnDate().after(loan.getReturnDate())) {
+            fineService.calculateFine(loan);
         }
 
-        LoanEntity emprestimoAtualizado = emprestimoRepository.save(emprestimo);
-        historicoService.atualizarHistorico(emprestimoAtualizado);
+        LoanEntity updatedLoan = loanRepository.save(loan);
+        historyService.updateHistory(updatedLoan);
 
-        return emprestimoAtualizado;
+        return updatedLoan;
     }
 
     public void deleteById(Long id) {
-        emprestimoRepository.deleteById(id);
+        loanRepository.deleteById(id);
     }
 
-    private void verificarStatusECalcularMulta(LoanEntity emprestimo) {
-        emprestimo.verificarStatus();
-        if ("Atrasado".equals(emprestimo.getLoanStatus())) {
-            multaService.calcularMulta(emprestimo);
+    private void verifyStatusAndCalculateFine(LoanEntity loan) {
+        loan.verifyStatus();
+        if ("Atrasado".equals(loan.getLoanStatus())) {
+            fineService.calculateFine(loan);
         }
     }
 }

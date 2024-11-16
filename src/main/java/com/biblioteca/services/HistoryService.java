@@ -16,47 +16,45 @@ import com.biblioteca.repositories.HistoryRepository;
 public class HistoryService {
 
     @Autowired
-    private HistoryRepository historicoRepository;
+    private HistoryRepository historyRepository;
 
-    public void registrarHistorico(LoanEntity emprestimo, FineEntity multa) {
-        HistoryEntity historico = new HistoryEntity();
-        historico.setUserId(emprestimo.getUserId());
-        historico.setBookId(emprestimo.getBookId());
-        historico.setLoanId(emprestimo);
+    public void registerHistory(LoanEntity loan, FineEntity fine) {
+        HistoryEntity history = new HistoryEntity();
+        history.setUserId(loan.getUserId());
+        history.setBookId(loan.getBookId());
+        history.setLoanId(loan);
 
-        if (emprestimo.getLoanDate() != null) {
-            historico.setLoanDate(new Date(emprestimo.getLoanDate().getTime()));
+        if (loan.getLoanDate() != null) {
+            history.setLoanDate(new Date(loan.getLoanDate().getTime()));
+        }
+        if (loan.getEfectiveReturnDate() != null) {
+            history.setReturnDate(new Date(loan.getEfectiveReturnDate().getTime()));
         }
         
-        if (emprestimo.getEfectiveReturnDate() != null) {
-            historico.setReturnDate(new Date(emprestimo.getEfectiveReturnDate().getTime()));
-        }
-        
-        historicoRepository.save(historico);
+        historyRepository.save(history);
     }
 
-    public void atualizarHistorico(LoanEntity emprestimo) {
-        Optional<HistoryEntity> historicoOptional = historicoRepository.findByLoanId_loanId(emprestimo.getLoanId());
+    public void updateHistory(LoanEntity loan) {
+        Optional<HistoryEntity> historyOptional = historyRepository.findByLoanId_loanId(loan.getLoanId());
 
-        HistoryEntity historico = historicoOptional.orElseGet(HistoryEntity::new);
-        historico.setUserId(emprestimo.getUserId());
-        historico.setBookId(emprestimo.getBookId());
-        historico.setLoanId(emprestimo);
+        HistoryEntity history = historyOptional.orElseGet(HistoryEntity::new);
+        history.setUserId(loan.getUserId());
+        history.setBookId(loan.getBookId());
+        history.setLoanId(loan);
         
-
-        if (emprestimo.getLoanDate() != null) {
-            historico.setLoanDate(new Date(emprestimo.getLoanDate().getTime()));
+        if (loan.getLoanDate() != null) {
+            history.setLoanDate(new Date(loan.getLoanDate().getTime()));
         }
         
-        if (emprestimo.getEfectiveReturnDate() != null) {
-            historico.setReturnDate(new Date(emprestimo.getEfectiveReturnDate().getTime()));
+        if (loan.getEfectiveReturnDate() != null) {
+            history.setReturnDate(new Date(loan.getEfectiveReturnDate().getTime()));
         }
 
-        historicoRepository.save(historico);
+        historyRepository.save(history);
     }
     
-    public List<HistoryEntity> listarHistorico(Long idUsuario) {
-        return historicoRepository.findByUserId_userId(idUsuario);
+    public List<HistoryEntity> listHistory(Long userId) {
+        return historyRepository.findByUserId_userId(userId);
     }
     
 }

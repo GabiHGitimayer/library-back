@@ -12,11 +12,11 @@ import com.biblioteca.repositories.UserRepository;
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    UserRepository usuarioRepository;
+    UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByUserCpf(username);
+        return userRepository.findByUserCpf(username);
     }
     
 }

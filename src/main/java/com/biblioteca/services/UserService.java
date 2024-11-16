@@ -10,29 +10,29 @@ import com.biblioteca.repositories.UserRepository;
 public class UserService {
 
     @Autowired
-    private UserRepository usuarioRepository;
+    private UserRepository userRepository;
 
-    public UserEntity saveUser(UserEntity usuarioEntity) {
-        String passEncoded = usuarioEntity.getUserPassword();
-        usuarioEntity.setUserPassword(passEncoded);
-        return usuarioRepository.save(usuarioEntity);
+    public UserEntity saveUser(UserEntity userEntity) {
+        String passEncoded = userEntity.getUserPassword();
+        userEntity.setUserPassword(passEncoded);
+        return userRepository.save(userEntity);
     }
 
     public List<UserEntity> listAllUsers() {
-        return usuarioRepository.findAll();
+        return userRepository.findAll();
     }
 
-    public UserEntity findUserById(Long idUsuario) {
-        return usuarioRepository.findById(idUsuario)
+    public UserEntity findUserById(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
-    public void deleteUser(Long idUsuario) {
-        usuarioRepository.deleteById(idUsuario);
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 
-    public UserEntity updateUser(Long idUsuario, UserEntity newUser) {
-        UserEntity existingUser = findUserById(idUsuario);
+    public UserEntity updateUser(Long userId, UserEntity newUser) {
+        UserEntity existingUser = findUserById(userId);
         existingUser.setUserName(newUser.getUsername());
         existingUser.setUserCpf(newUser.getUserCpf());
 
@@ -43,6 +43,6 @@ public class UserService {
 
         existingUser.setUserEmail(newUser.getUserEmail());
         existingUser.setUserType(newUser.getUserType());
-        return usuarioRepository.save(existingUser);
+        return userRepository.save(existingUser);
     }
 }
