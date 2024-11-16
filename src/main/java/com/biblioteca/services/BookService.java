@@ -24,8 +24,8 @@ public class BookService {
     }
 
 
-    public BookEntity save(BookEntity livro) {
-        return bookRepository.save(livro);
+    public BookEntity save(BookEntity book) {
+        return bookRepository.save(book);
     }
 
     public void deleteById(Long id) {
