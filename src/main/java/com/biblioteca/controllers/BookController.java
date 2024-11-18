@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.biblioteca.dto.DeleteBookResponseDTO;
+import com.biblioteca.dto.EditBookResponse;
 import com.biblioteca.entities.BookEntity;
 import com.biblioteca.services.BookService;
 
@@ -25,27 +27,26 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping
-    public ResponseEntity<BookEntity> save(@RequestBody BookEntity book) {
-        return ResponseEntity.ok(bookService.save(book));
-    }
-
     @GetMapping
     public ResponseEntity<List<BookEntity>> listAll() {
         return ResponseEntity.ok(bookService.findAll());
     }
 
+    @PostMapping
+    public ResponseEntity<BookEntity> save(@RequestBody BookEntity book) {
+        return ResponseEntity.status(201).body(bookService.save(book));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<BookEntity> findById(@PathVariable Long id) {
         BookEntity book = bookService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado!"));
 
         return ResponseEntity.ok(book);
     }
 
-
     @PutMapping("/{id}")
-    public ResponseEntity<BookEntity> update(@PathVariable Long id, @RequestBody BookEntity book) {
+    public ResponseEntity<EditBookResponse> update(@PathVariable Long id, @RequestBody BookEntity book) {
         return bookService.findById(id)
                 .map(existingBook -> {
                     existingBook.setTitle(book.getTitle());
@@ -55,16 +56,14 @@ public class BookController {
                     existingBook.setPublicationYear(book.getPublicationYear());
                     existingBook.setCopiesQuantity(book.getCopiesQuantity());
                     BookEntity updatedBook = bookService.save(existingBook);
-                    return ResponseEntity.ok(updatedBook);
+                    return ResponseEntity.ok(new EditBookResponse("Livro editado com sucesso! ", updatedBook));
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.status(204).body(new EditBookResponse("Livro não encontrado!", null)));
     }
-
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        bookService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<DeleteBookResponseDTO> delete(@PathVariable Long id) {
+        String message = bookService.deleteById(id);
+        return ResponseEntity.ok(new DeleteBookResponseDTO(message));
     }
 }
-

@@ -21,8 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -41,17 +39,18 @@ public class AuthController {
         var auth = this.authenticationManager.authenticate(usersPassword);
         var token = tokenService.generateToken((UserEntity) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO("Logado com sucesso!", token));
+        return ResponseEntity.accepted().body(new LoginResponseDTO("Logado com sucesso!", token));
     }
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterDTO data) {
-        if(this.userRepository.findByUserCpf(data.cpf()) != null) return ResponseEntity.badRequest().build();
-        
+        if (this.userRepository.findByUserCpf(data.cpf()) != null)
+            return ResponseEntity.badRequest().body(new RegisterResponseDTO("Já existe um usuário com esse CPF!"));
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         UserEntity newUser = new UserEntity(data.name(), data.email(), data.cpf(), data.type(), encryptedPassword);
-        
+
         this.userRepository.save(newUser);
-        return ResponseEntity.ok(new RegisterResponseDTO("Usuário criado com sucesso!"));
+        return ResponseEntity.status(201).body(new RegisterResponseDTO("Usuário criado com sucesso!"));
     }
 }

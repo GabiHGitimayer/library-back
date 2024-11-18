@@ -22,45 +22,16 @@ import com.biblioteca.services.LoanService;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/loans")
 public class LoanController {
+    //TODO: verificar a controller inteira kkkkkk
 
     @Autowired
     private LoanService loanService;
-    
-    @PostMapping("/do")
-    public ResponseEntity<LoanEntity> doLoan(@RequestBody LoanEntity loan) {
-        try {
-            LoanEntity saved = loanService.doLoan(loan);
-            return ResponseEntity.ok(saved);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(null);
-        }
-    }
-    
-    @PutMapping("/update/{id}")
-    public ResponseEntity<LoanEntity> updateLoan(@PathVariable Long id, @RequestBody LoanEntity updatedLoan) {
-        try {
-            LoanEntity loan = loanService.updateLoan(id, updatedLoan);
-            return ResponseEntity.ok(loan);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(null);
-        }
-    }
 
     @GetMapping
     public ResponseEntity<List<LoanEntity>> listLoan() {
         try {
             List<LoanEntity> loans = loanService.findAll();
             return ResponseEntity.ok(loans);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(null);
-        }
-    }
-
-    @PostMapping("/return/{id}")
-    public ResponseEntity<LoanEntity> makeReturn(@PathVariable Long id) {
-        try {
-            LoanEntity returned = loanService.makeReturn(id);
-            return ResponseEntity.ok(returned);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }
@@ -85,6 +56,36 @@ public class LoanController {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+    
+    @PostMapping("/do")
+    public ResponseEntity<LoanEntity> doLoan(@RequestBody LoanEntity loan) {
+        try {
+            LoanEntity saved = loanService.doLoan(loan);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+
+    @PostMapping("/return/{id}")
+    public ResponseEntity<LoanEntity> makeReturn(@PathVariable Long id) {
+        try {
+            LoanEntity returned = loanService.makeReturn(id);
+            return ResponseEntity.ok(returned);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+    
+    @PutMapping("/update/{id}")
+    public ResponseEntity<LoanEntity> updateLoan(@PathVariable Long id, @RequestBody LoanEntity updatedLoan) {
+        try {
+            LoanEntity loan = loanService.updateLoan(id, updatedLoan);
+            return ResponseEntity.ok(loan);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(null);
         }

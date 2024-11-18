@@ -26,10 +26,14 @@ public class FineController {
     @Autowired
     private LoanService loanService;
 
+    //TODO: adicionar uma rota para pegar a listagem das multas
+    //TODO: adicionar uma rota para pegar a listagem de multas por usuário
+    //TODO: alterar as rotas abaixo, não é necessário uma rota a mais para editar e salvar multas, pode ser apenas "/{id}"
+
     @PostMapping("/calculate/{loanId}")
     public ResponseEntity<FineEntity> calculateFine(@PathVariable Long loanId) {
         LoanEntity loan = loanService.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado!"));
         FineEntity fine = fineService.calculateFine(loan);
         return ResponseEntity.ok(fine);
     }

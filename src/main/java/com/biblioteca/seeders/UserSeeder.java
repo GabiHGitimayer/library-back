@@ -26,7 +26,7 @@ public class UserSeeder {
         if (!userExists("joao_silva@library.com")) {
             jdbcTemplate.update(
                     "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "João Silva", "12345678901", passEncoder.encode("senha123"), "ADMIN", "joao_silva@library.com");
+                    "João Silva", "12345678901", passEncoder.encode("senha123"), "EMPLOYEE", "joao_silva@library.com");
         }
 
         if (!userExists("maria_oliveria@library.com")) {
