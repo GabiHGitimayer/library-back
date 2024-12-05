@@ -7,5 +7,4 @@ import com.biblioteca.entities.BookEntity;
 
 @Repository
 public interface BookRepository extends JpaRepository<BookEntity, Long> {
-    boolean existsByTitle(String title);
 }
