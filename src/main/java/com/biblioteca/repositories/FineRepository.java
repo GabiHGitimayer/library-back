@@ -1,5 +1,7 @@
 package com.biblioteca.repositories;
 
+import java.util.Date;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -7,5 +9,5 @@ import com.biblioteca.entities.FineEntity;
 
 @Repository
 public interface FineRepository extends JpaRepository<FineEntity, Long> {
-    
+    boolean existsByLoanIdAndCalculationDate(Long loanId, Date calculationDate);
 }

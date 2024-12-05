@@ -1,8 +1,9 @@
 package com.biblioteca.seeders;
 
+import com.biblioteca.entities.BookEntity;
+import com.biblioteca.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,34 +11,28 @@ import org.springframework.stereotype.Service;
 public class BookSeeder {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private BookRepository bookRepository;
 
     public void seedBooks() {
-        System.out.println("Populando tabela de livros...");
+        System.out.println("Populando tabela de livros...\n");
 
-        if (!bookExists("O Senhor dos Anéis")) {
-            jdbcTemplate.update(
-                    "INSERT INTO book (title, author, genre, isbn, publication_year, copies_quantity) VALUES ('O Senhor dos Anéis', 'J.R.R. Tolkien', 'Fantasia', '978-3-16-148410-0', 1954, 10)");
-        }
-        if (!bookExists("1984")) {
-            jdbcTemplate.update(
-                    "INSERT INTO book (title, author, genre, isbn, publication_year, copies_quantity) VALUES ('1984', 'George Orwell', 'Distopia', '978-0-452-28423-4', 1949, 8)");
-        }
-        if (!bookExists("A Brief History of Time")) {
-            jdbcTemplate.update(
-                    "INSERT INTO book (title, author, genre, isbn, publication_year, copies_quantity) VALUES ('A Brief History of Time', 'Stephen Hawking', 'Ciência', '978-0-553-17521-9', 1988, 5)");
-        }
-        if (!bookExists("O Hobbit")) {
-            jdbcTemplate.update(
-                "INSERT INTO book (title, author, genre, isbn, publication_year, copies_quantity) VALUES ('O Hobbit', 'J.R.R. Tolkien', 'Fantasia', '978-0-345-39934-7', 1937, 6)");
-        }
+        saveBookIfNotExists("O Senhor dos Anéis", "J.R.R. Tolkien", "Fantasia", "978-3-16-148410-0", 1954, 10);
+        saveBookIfNotExists("1984", "George Orwell", "Distopia", "978-0-452-28423-4", 1949, 8);
+        saveBookIfNotExists("A Brief History of Time", "Stephen Hawking", "Ciência", "978-0-553-17521-9", 1988, 5);
+        saveBookIfNotExists("O Hobbit", "J.R.R. Tolkien", "Fantasia", "978-0-345-39934-7", 1937, 6);
     }
 
-    private boolean bookExists(String book) {
-        @SuppressWarnings("deprecation")
-        Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM book WHERE title = ?",
-                new Object[] { book }, Integer.class);
-        return count != null && count > 0;
+    private void saveBookIfNotExists(String title, String author, String genre, String isbn, int publicationYear,
+            int copiesQuantity) {
+        if (!bookRepository.existsByTitle(title)) {
+            BookEntity book = new BookEntity();
+            book.setTitle(title);
+            book.setAuthor(author);
+            book.setGenre(genre);
+            book.setIsbn(isbn);
+            book.setPublicationYear(publicationYear);
+            book.setCopiesQuantity(copiesQuantity);
+            bookRepository.save(book);
+        }
     }
 }

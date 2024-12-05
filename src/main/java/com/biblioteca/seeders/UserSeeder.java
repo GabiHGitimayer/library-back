@@ -1,8 +1,10 @@
 package com.biblioteca.seeders;
 
+import com.biblioteca.entities.UserEntity;
+import com.biblioteca.entities.UserType;
+import com.biblioteca.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,50 +13,28 @@ import org.springframework.stereotype.Service;
 public class UserSeeder {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private UserRepository userRepository;
     private final BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
 
     public void seedUsers() {
         System.out.println("Populando tabela de usuários...");
 
-        if (!userExists("admin@library.com")) {
-            jdbcTemplate.update(
-                    "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "Admin", "98765432100", passEncoder.encode("Admin"), "ADMIN", "admin@library.com");
-        }
-
-        if (!userExists("joao_silva@library.com")) {
-            jdbcTemplate.update(
-                    "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "João Silva", "12345678901", passEncoder.encode("senha123"), "EMPLOYEE", "joao_silva@library.com");
-        }
-
-        if (!userExists("maria_oliveria@library.com")) {
-            jdbcTemplate.update(
-                    "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "Maria Oliveira", "12341234123", passEncoder.encode("senha456"), "USER",
-                    "maria_oliveria@library.com");
-        }
-
-        if (!userExists("carlos_souza@library.com")) {
-            jdbcTemplate.update(
-                    "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "Carlos Souza", "11223344556", passEncoder.encode("senha789"), "EMPLOYEE",
-                    "carlos_souza@library.com");
-        }
-
-        if (!userExists("ana_costa@library.com")) {
-            jdbcTemplate.update(
-                    "INSERT INTO user (user_name, user_cpf, user_password, user_type, user_email) VALUES (?, ?, ?, ?, ?)",
-                    "Ana Costa", "55667788999", passEncoder.encode("senha101"), "USER", "ana_costa@library.com");
-        }
+        saveUserIfNotExists("Admin", "98765432100", "Admin", "ADMIN", "admin@library.com");
+        saveUserIfNotExists("João Silva", "12345678901", "senha123", "EMPLOYEE", "joao_silva@library.com");
+        saveUserIfNotExists("Maria Oliveira", "12341234123", "senha456", "USER", "maria_oliveria@library.com");
+        saveUserIfNotExists("Carlos Souza", "11223344556", "senha789", "EMPLOYEE", "carlos_souza@library.com");
+        saveUserIfNotExists("Ana Costa", "55667788999", "senha101", "USER", "ana_costa@library.com");
     }
 
-    private boolean userExists(String email) {
-        @SuppressWarnings("deprecation")
-        Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM user WHERE user_email = ?",
-                new Object[] { email }, Integer.class);
-        return count != null && count > 0;
+    private void saveUserIfNotExists(String name, String cpf, String password, String type, String email) {
+        if (!userRepository.existsByEmail(email)) {
+            UserEntity user = new UserEntity();
+            user.setUserName(name);
+            user.setUserCpf(cpf);
+            user.setUserPassword(passEncoder.encode(password));
+            user.setUserType(UserType.valueOf(type));
+            user.setUserEmail(email);
+            userRepository.save(user);
+        }
     }
 }
