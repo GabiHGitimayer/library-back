@@ -39,7 +39,6 @@ public class HistoryEntity {
     @JoinColumn(name = "loanId", nullable = false)
     private LoanEntity loanId;
     
-    //TODO: para que serve esse returnId?
     @ManyToOne
     @JoinColumn(name = "returnId")
     private LoanEntity returnId;

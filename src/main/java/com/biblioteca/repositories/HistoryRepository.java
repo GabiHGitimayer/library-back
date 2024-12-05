@@ -12,9 +12,5 @@ import com.biblioteca.entities.HistoryEntity;
 public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
 
     List<HistoryEntity> findByUserId_userId(Long userId);
-
     Optional<HistoryEntity> findByLoanId_loanId(Long loanId);
-
-    boolean existsByUserIdAndBookIdAndLoanId(Long userId, Long bookId, Long loanId);
-
 }
