@@ -22,7 +22,7 @@ public class SeederCommand implements CommandLineRunner {
     private FineSeeder fineSeeder;
 
     @Autowired
-    private HistorySeeder historySeeder;
+    // private HistorySeeder historySeeder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -32,7 +32,7 @@ public class SeederCommand implements CommandLineRunner {
         bookSeeder.seedBooks();
         loanSeeder.seedLoans();
         fineSeeder.seedFines();
-        historySeeder.seedHistory();
+        // historySeeder.seedHistory();
 
         System.out.println("Seeding concluído!");
     }
