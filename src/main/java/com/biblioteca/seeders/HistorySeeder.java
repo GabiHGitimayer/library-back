@@ -1,13 +1,13 @@
-// package com.biblioteca.seeders;
+package com.biblioteca.seeders;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-// @Service
-// @Profile("dev")
-// public class HistorySeeder {
+@Service
+@Profile("dev")
+public class HistorySeeder {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
