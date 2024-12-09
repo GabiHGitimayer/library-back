@@ -23,10 +23,12 @@ import com.biblioteca.services.UserService;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/user")
 public class UserController {
+    
 
     @Autowired
     private UserService userService;
 
+    
     @GetMapping
     public ResponseEntity<List<UserEntity>> listAll() {
         return ResponseEntity.ok(userService.listAllUsers());
