@@ -75,10 +75,9 @@ public class UserEntity implements UserDetails {
         return userPassword;
     }
 
-    @JsonIgnore
     @Override
     public String getUsername() {
-        return userCpf;
+        return userName;
     }
 
     @JsonIgnore
