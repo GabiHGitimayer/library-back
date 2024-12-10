@@ -30,9 +30,9 @@ public class SeederCommand implements CommandLineRunner {
 
         userSeeder.seedUsers();
         bookSeeder.seedBooks();
-        loanSeeder.seedLoans();
-        fineSeeder.seedFines();
-        historySeeder.seedHistory();
+        // loanSeeder.seedLoans();
+        // fineSeeder.seedFines();
+        // historySeeder.seedHistory();
 
         System.out.println("Seeding concluído!");
     }

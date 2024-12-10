@@ -1,5 +1,6 @@
 CREATE TABLE fine (
     fine_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user BIGINT NOT NULL,
     loan BIGINT NOT NULL,
     fine_value DECIMAL(10, 2) NOT NULL,
     calculation_date DATE NOT NULL,

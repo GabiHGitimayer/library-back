@@ -31,6 +31,10 @@ public class FineEntity {
     private Long fineId;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    private UserEntity user;
+
+    @ManyToOne
     @JoinColumn(name = "loan", nullable = false)
     private LoanEntity loan;
 

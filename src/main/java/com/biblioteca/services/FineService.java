@@ -2,6 +2,7 @@ package com.biblioteca.services;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,14 @@ public class FineService {
 
     @Autowired
     private FineRepository fineRepository;
+
+    public List<FineEntity> listAllFines() {
+        return fineRepository.findAll();
+    }
+
+    public List<FineEntity> listAllFinesById(Long id) {
+        return fineRepository.findByUser_UserId(id);
+    }
 
     public FineEntity calculateFine(LoanEntity loan) {
         Date today = new Date();
