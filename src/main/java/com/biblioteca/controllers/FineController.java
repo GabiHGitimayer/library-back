@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping("/fines")
 public class FineController {
 
     @Autowired
     private FineService fineService;
+    
     
     @GetMapping
     public ResponseEntity<List<FineEntity>> getFines() {

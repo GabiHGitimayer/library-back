@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ import com.biblioteca.entities.BookEntity;
 import com.biblioteca.services.BookService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping("/books")
 public class BookController {
 
@@ -32,6 +33,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findAll());
     }
 
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PostMapping
     public ResponseEntity<BookEntity> save(@RequestBody BookEntity book) {
         return ResponseEntity.status(201).body(bookService.save(book));
@@ -44,7 +46,7 @@ public class BookController {
 
         return ResponseEntity.ok(book);
     }
-
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PutMapping("/{id}")
     public ResponseEntity<EditBookResponse> update(@PathVariable Long id, @RequestBody BookEntity book) {
         return bookService.findById(id)
@@ -61,6 +63,7 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.status(204).body(new EditBookResponse("Livro não encontrado!", null)));
     }
 
+    @PreAuthorize ("hasRole ('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<DeleteBookResponseDTO> delete(@PathVariable Long id) {
         String message = bookService.deleteById(id);

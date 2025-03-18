@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
@@ -44,6 +45,7 @@ public class AuthController {
         return ResponseEntity.accepted().body(new LoginResponseDTO("Logado com sucesso!", token));
     }
 
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterDTO data) {
         if (this.userRepository.findByUserCpf(data.cpf()) != null)

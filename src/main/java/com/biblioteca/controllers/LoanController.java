@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,10 @@ import com.biblioteca.entities.LoanEntity;
 import com.biblioteca.services.LoanService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping("/loans")
 public class LoanController {
-    //TODO: verificar a controller inteira kkkkkk
+
 
     @Autowired
     private LoanService loanService;
@@ -60,7 +61,7 @@ public class LoanController {
             return ResponseEntity.status(400).body(null);
         }
     }
-    
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PostMapping("/do")
     public ResponseEntity<LoanEntity> doLoan(@RequestBody LoanEntity loan) {
         try {
@@ -70,7 +71,7 @@ public class LoanController {
             return ResponseEntity.status(400).body(null);
         }
     }
-
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PostMapping("/return/{id}")
     public ResponseEntity<LoanEntity> makeReturn(@PathVariable Long id) {
         try {
@@ -80,7 +81,7 @@ public class LoanController {
             return ResponseEntity.status(400).body(null);
         }
     }
-    
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PutMapping("/update/{id}")
     public ResponseEntity<LoanEntity> updateLoan(@PathVariable Long id, @RequestBody LoanEntity updatedLoan) {
         try {
@@ -90,7 +91,7 @@ public class LoanController {
             return ResponseEntity.status(400).body(null);
         }
     }
-
+    @PreAuthorize ("hasRole ('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         try {

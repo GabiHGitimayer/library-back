@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ import com.biblioteca.entities.UserEntity;
 import com.biblioteca.services.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping("/user")
 public class UserController {
     
@@ -38,13 +39,14 @@ public class UserController {
     public ResponseEntity<UserEntity> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
-
+    @PreAuthorize ("hasRole ('ADMIN') OR hasRole ('EMPLOYEE')")
     @PutMapping("/{id}")
     public ResponseEntity<EditUserResponse> update(@PathVariable Long id, @RequestBody EditUserDTO user) {
         return ResponseEntity
                 .ok(new EditUserResponse("Usuário alterado com sucesso!", userService.updateUser(id, user)));
     }
 
+    @PreAuthorize ("hasRole ('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<DeleteUserResponseDTO> delete(@PathVariable Long id) {
         String message = userService.deleteUser(id);
